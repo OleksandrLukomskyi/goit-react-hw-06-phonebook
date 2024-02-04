@@ -1,101 +1,77 @@
-// import { useState, useEffect, useRef } from 'react';
+
+
 import ContactForm from 'components/ContactForm';
 import ContactList from 'components/ContactList';
 import Filter from 'components/Filter';
-// import { nanoid } from 'nanoid';
+import { nanoid } from '@reduxjs/toolkit';
 import css from './App.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import {  removeContactAction, updateContactAction } from 'store/contact/sliceContact';
+import {  addContactAction, removeContactAction, updateFilterAction } from 'store/contact/sliceContact';
+
+
 
 const App = () => {
-  const {contacts} = useSelector((state) => state.contacts)
-  const dispatch = useDispatch()
+  const contacts = useSelector((state) => state.contact.contacts);
+  const filter = useSelector((state) => state.contact.filter);
+  const dispatch = useDispatch();
+
+
   
   const deleteContact = (id) => {
     dispatch(removeContactAction(id))
   }
 
-  const updateContact = (id) => {
-    dispatch(updateContactAction(id))
-  }
-  // const [contacts, setContacts] = useState([
-  //   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  //   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  //   { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  //   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  // ]);
+ 
+  const handleAddContact = (name, number) => {
+    const isExist = contacts.some(
+      contact =>
+        contact.name === name.trim() || contact.number === number.trim()
+    );
 
-  // const [filter, setFiltet] = useState('');
+    if (isExist) {
+      alert(`${name} is already in contacts.`);
+      return;
+    }
 
-  // useEffect(() => {
-  //   const contacts = localStorage.getItem('contacts');
-  //   const parsedContacts = JSON.parse(contacts);
-  //   if (parsedContacts) {
-  //     setContacts(parsedContacts);
-      
-  //   }
-  // }, []);
+    const newContact = {
+      id: nanoid(),
+      name: name.trim(),
+      number: number.trim(),
+    };
 
-  // const prevContacts = useRef(contacts);
+    dispatch(addContactAction(newContact));
 
-  // useEffect(() => {
-  //   if (contacts !== prevContacts.current) {
-  //     localStorage.setItem('contacts', JSON.stringify(contacts));
-  //   }
-  // }, [contacts]);
+    };
 
-  // const handleAddContact = (name, number) => {
-  //   const isExist = contacts.some(
-  //     contact =>
-  //       contact.name === name.trim() || contact.number === number.trim()
-  //   );
+  const changeFilter = filter => {
+    dispatch(updateFilterAction(filter))
+  };
 
-    // if (isExist) {
-    //   alert(`${name} is already in contacts.`);
-    //   return;
-    // }
-
-  //   const newContact = {
-  //     id: nanoid(),
-  //     name: name.trim(),
-  //     number: number.trim(),
-  //   };
-
-  //   setContacts(prevState => [...prevState, newContact]);
-  // };
-
-  // const changeFilter = filter => {
-  //   setFiltet(filter);
-  // };
-
-  // const handleDeleteContact = contactId => {
-  //   setContacts(prevState =>
-  //     prevState.filter(contact => contact.id !== contactId)
-  //   );
-  // };
-
-  // const filteredContacts = () => {
-  //   const normalizedFilter = filter.toLowerCase();
-  //   return contacts.filter(contact =>
-  //     contact.name.toLowerCase().includes(normalizedFilter)
-  //   );
-  // };
+  
+  const filteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
 
   return (
-    <div className={css.container}>
-      <h1>Phonebook</h1>
-
-      <ContactForm onSubmit={handleAddContact} />
-
-      <h2>Contacts</h2>
-
-      <Filter filter={filter} onFilterChange={changeFilter} />
-
-      <ContactList
-        contacts={filteredContacts()}
-        onDeleteContact={deleteContact}
-      />
-    </div>
+   
+      <div className={css.container}>
+        <h1>Phonebook</h1>
+  
+        <ContactForm onSubmit={handleAddContact} />
+  
+        <h2>Contacts</h2>
+  
+        <Filter filter={filter} onFilterChange={changeFilter} />
+  
+        <ContactList
+          contacts={filteredContacts()}
+          onDeleteContact={deleteContact}
+        />
+      </div>
+   
   );
 };
 

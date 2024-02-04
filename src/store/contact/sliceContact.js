@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
+
 
 const initialState = {
    contacts: [ { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -28,11 +28,12 @@ reducer: (state, {payload}) => {
    removeContactAction: (state, {payload}) => {
       state.contacts = state.contacts.filter((el) => el.id !== payload)
    },
-   updateContactAction: (state, {payload}) => {
-      state.contacts = state.contacts.map((el) => el.id === payload ? {...el, completed: !el.completed}: el)
-   }
+   updateFilterAction: (state, {payload}) => {
+      state.filter = payload
+}
 }
 })
 
-export const todoReducer = sliceContact.reducer
-export const {addContactAction, removeContactAction, updateContactAction} = sliceContact.actions
+
+export const contactReducer = sliceContact.reducer;
+export const {addContactAction, removeContactAction, updateFilterAction} = sliceContact.actions;

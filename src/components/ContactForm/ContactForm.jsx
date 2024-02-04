@@ -27,9 +27,7 @@ const ContactForm = ({ onSubmit }) => {
     setName('');
   };
 
-  // const reset = () => {
-  //          setName('');
-  //       }
+ 
 
   return (
     <form onSubmit={handleSubmit} className={css.formBloc}>
