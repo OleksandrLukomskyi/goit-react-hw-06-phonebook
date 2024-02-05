@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import css from './ContactForm.module.css';
 
-const ContactForm = ({ onSubmit }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import css from './ContactForm.module.css';
+import { addContactAction } from 'store/contact/sliceContact';
+import { nanoid } from '@reduxjs/toolkit';
+
+const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contact.contacts);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -22,12 +27,30 @@ const ContactForm = ({ onSubmit }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit(name, number);
+
+    const isExist = contacts.some(
+      contact =>
+        contact.name === name.trim() || contact.number === number.trim()
+    );
+
+    if (isExist) {
+      alert(`${name} is already in contacts.`);
+      return;
+    }
+
+    const newContact = {
+      id: nanoid(),
+      name: name.trim(),
+      number: number.trim(),
+    };
+
+    dispatch(addContactAction(newContact));
+
     setNumber('');
     setName('');
-  };
 
- 
+    e.target.reset();
+  };
 
   return (
     <form onSubmit={handleSubmit} className={css.formBloc}>
